@@ -30,7 +30,6 @@ migrate: ## Create Migrations file, example : make migrate name="xxxx"
 	migrate create -ext sql -dir migrations ':hammer: ${name}'
 
 
-
 migrate-up: ## Up migration, example : make migrate-up envfile=.env.test
 	go run cmd/migrate/main.go -envfile=${envfile}
 
@@ -73,7 +72,7 @@ docker.rm:
 	docker rm ${registry}/${username}/${image}:${tags} -f
 	docker rmi ${registry}/${username}/${image}:${tags}
 
-docker/enter:
+docker.enter:
 	docker exec -it ${image} bash
 
 docker.enterimg:
@@ -93,7 +92,7 @@ flylist:
 
 
 entermysql:
-	docker exec -it mysql_go_simple_user_crud mysql -uADMIN -pSECRET go_simple_user_crud
+	docker exec -it mysql_go_todo_list mysql -uADMIN -pSECRET todo4
 
 test:
 	go test -run=TestHandlerUsers ./internal/delivery/http/handler -v -count=1 --cover
