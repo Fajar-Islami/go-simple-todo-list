@@ -55,17 +55,17 @@ docker.build:
 docker.run:
 	docker run --name ${image} -p 8080:8080 ${registry}/${username}/${image}:${tags}
 
-docker.up: ## up compose image
-	docker compose -f docker-compose-app.yaml up -d
+dc.up: ## up compose image
+	docker compose -f docker-compose.yaml up -d
 
-docker.logs: ## logs compose image
-	docker compose -f docker-compose-app.yaml logs -f
+dc.logs: ## logs compose image
+	docker compose -f docker-compose.yaml logs -f
 
-docker.stop: ## stop compose image
-	docker compose -f docker-compose-app.yaml stop
+dc.stop: ## stop compose image
+	docker compose -f docker-compose.yaml stop
 
-docker.down: ## rm compose image
-	docker compose -f docker-compose-app.yaml down -v
+dc.down: ## rm compose image
+	docker compose -f docker-compose.yaml down -v
 
 
 docker.rm:
