@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	rest "go-todo-list/internal/delivery/http"
 	"go-todo-list/internal/infrastructure/container"
 	"log"
@@ -17,12 +18,15 @@ func main() {
 
 	defer contConf.Mysqldb.Close()
 
+	fmt.Println("contConf.Mysqldb", fmt.Sprintf("%#v \n\n", contConf.Mysqldb.Stats()))
+	// mysqlConfig.Host, mysqlConfig.Port, mysqlConfig.DbName
 	migration(contConf.Mysqldb)
 
 	rest.HTTPRouteInit(contConf)
 }
 
 func migration(db *sql.DB) {
+	fmt.Println("db", fmt.Sprintf("%#v \n\n", db))
 	driver, err := mysql.WithInstance(db, &mysql.Config{})
 	if err != nil {
 		log.Println("err", err)

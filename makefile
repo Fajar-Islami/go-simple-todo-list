@@ -48,11 +48,11 @@ run.env:
 	docker compose up -d mysql_go_todo_list
 
 docker.build:
-	docker build --rm -t ${username}/${image}:${tags} .
+	docker build --rm -t ${image}:${tags} .
 	docker image prune --filter label=stage=dockerbuilder -f
 
 docker.run:
-	docker run --name ${image} -p 8080:8080 ${username}/${image}:${tags}
+	docker run --name ${image} -p 8080:8080 ${image}:${tags}
 
 dc.up: ## up compose image
 	docker compose -f docker-compose.yaml up -d
@@ -68,20 +68,20 @@ dc.down: ## rm compose image
 
 
 docker.rm:
-	docker rm ${username}/${image}:${tags} -f
-	docker rmi ${username}/${image}:${tags}
+	docker rm ${image}:${tags} -f
+	docker rmi ${image}:${tags}
 
 docker.enter:
 	docker exec -it ${image} bash
 
 docker.enterimg:
-	docker run -it --entrypoint sh  ${username}/${image}:${tags}
+	docker run -it --entrypoint sh  ${image}:${tags}
 
 dc.check:
 	 docker compose -f docker-compose.yaml config
 	 
 push-image: dockerbuild
-	docker push ${username}/${image}:${tags}
+	docker push ${image}:${tags}
 
 flysecret:
 	flyctl secrets set $(cat .env | xargs)
