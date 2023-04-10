@@ -10,7 +10,6 @@ RUN swag init -g ./internal/delivery/http/main.go --output ./docs/
 
 # Build the binary
 RUN go build -o apps cmd/main.go
-RUN go run cmd/migrate/main.go
 
 # Now copy it into our base image.
 FROM alpine:3.9
