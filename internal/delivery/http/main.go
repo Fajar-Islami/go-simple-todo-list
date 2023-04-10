@@ -28,8 +28,10 @@ func HTTPRouteInit(containerConf *container.Container) {
 	api := app.Group("/api/v1") // /api
 
 	agApi := api.Group("/activity-groups")
-	// todoApi := api.Group("/todo-items")
 	handler.ActivitiesRoute(agApi, containerConf)
+
+	todoApi := api.Group("/todo-items")
+	handler.TodosRoute(todoApi, containerConf)
 
 	// Start server
 	port := fmt.Sprintf("%s:%d", containerConf.Apps.Host, containerConf.Apps.HttpPort)

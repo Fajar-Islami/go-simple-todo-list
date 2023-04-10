@@ -20,14 +20,15 @@ type (
 
 type (
 	FilterTodos struct {
-		Limit, Page int
-		Short       string
+		Limit, Page, ActivityGroupID int
+		Short                        string
 	}
 	Todos struct {
 		TodoID          int64        `json:"todo_id"`
 		ActivityGroupID int64        `json:"activity_group_id"`
 		Title           string       `json:"title"`
-		Priority        int64        `json:"priority"`
+		IsActive        *bool        `json:"is_active"`
+		Priority        string       `json:"priority"`
 		CreatedAt       sql.NullTime `json:"created_at"`
 		UpdatedAt       sql.NullTime `json:"updated_at"`
 	}

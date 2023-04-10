@@ -12,8 +12,6 @@ import (
 	"net/http"
 )
 
-var currentfilepath = "internal/pkg/usecase/usecase.go"
-
 type ActivitiesUseCase interface {
 	GetAllActivities(ctx context.Context, params activitiesdto.ActivitiesFilter) (res []activitiesdto.ActivitiesResp, err *helper.ErrorStruct)
 	GetActivitiesByID(ctx context.Context, activitiesid int64) (res activitiesdto.ActivitiesResp, err *helper.ErrorStruct)
@@ -24,16 +22,18 @@ type ActivitiesUseCase interface {
 
 type ActivitiesUseCaseImpl struct {
 	activitiesrepository repository_mysql.ActivitiesRepository
+	currentfilepath      string
 }
 
 func NewActivitiesUseCase(activitiesrepository repository_mysql.ActivitiesRepository) ActivitiesUseCase {
 	return &ActivitiesUseCaseImpl{
 		activitiesrepository: activitiesrepository,
+		currentfilepath:      "internal/pkg/usecase/usecase_activities.go",
 	}
 
 }
 
-func (alc *ActivitiesUseCaseImpl) GetAllActivities(ctx context.Context, params activitiesdto.ActivitiesFilter) (res []activitiesdto.ActivitiesResp, err *helper.ErrorStruct) {
+func (acu *ActivitiesUseCaseImpl) GetAllActivities(ctx context.Context, params activitiesdto.ActivitiesFilter) (res []activitiesdto.ActivitiesResp, err *helper.ErrorStruct) {
 	if params.Limit < 1 {
 		params.Limit = 10
 	}
@@ -57,7 +57,7 @@ func (alc *ActivitiesUseCaseImpl) GetAllActivities(ctx context.Context, params a
 		params.Short = "date desc"
 	}
 
-	resRepo, errRepo := alc.activitiesrepository.GetAllActivities(ctx, repository_mysql.FilterActivities{
+	resRepo, errRepo := acu.activitiesrepository.GetAllActivities(ctx, repository_mysql.FilterActivities{
 		Limit: params.Limit,
 		Page:  params.Page,
 		Short: params.Short,
@@ -70,7 +70,7 @@ func (alc *ActivitiesUseCaseImpl) GetAllActivities(ctx context.Context, params a
 	}
 
 	if errRepo != nil {
-		helper.Logger(currentfilepath, helper.LoggerLevelError, "Error at GetAllActivities", errRepo)
+		helper.Logger(acu.currentfilepath, helper.LoggerLevelError, "Error at GetAllActivities", errRepo)
 		return res, &helper.ErrorStruct{
 			Code: http.StatusBadRequest,
 			Err:  errRepo,
@@ -89,11 +89,11 @@ func (alc *ActivitiesUseCaseImpl) GetAllActivities(ctx context.Context, params a
 
 	return res, nil
 }
-func (alc *ActivitiesUseCaseImpl) GetActivitiesByID(ctx context.Context, activitiesid int64) (res activitiesdto.ActivitiesResp, err *helper.ErrorStruct) {
-	resRepo, errRepo := alc.activitiesrepository.GetActivitiesByID(ctx, activitiesid)
+func (acu *ActivitiesUseCaseImpl) GetActivitiesByID(ctx context.Context, activitiesid int64) (res activitiesdto.ActivitiesResp, err *helper.ErrorStruct) {
+	resRepo, errRepo := acu.activitiesrepository.GetActivitiesByID(ctx, activitiesid)
 
 	if errRepo != nil {
-		helper.Logger(currentfilepath, helper.LoggerLevelError, "Error at GetActivitiesByID", errRepo)
+		helper.Logger(acu.currentfilepath, helper.LoggerLevelError, "Error at GetActivitiesByID", errRepo)
 		return res, &helper.ErrorStruct{
 			Code: http.StatusBadRequest,
 			Err:  errRepo,
@@ -108,19 +108,19 @@ func (alc *ActivitiesUseCaseImpl) GetActivitiesByID(ctx context.Context, activit
 		UpdatedAt:  resRepo.UpdatedAt.Time,
 	}, nil
 }
-func (alc *ActivitiesUseCaseImpl) CreateActivities(ctx context.Context, data activitiesdto.ActivitiesReqCreate) (res int64, err *helper.ErrorStruct) {
+func (acu *ActivitiesUseCaseImpl) CreateActivities(ctx context.Context, data activitiesdto.ActivitiesReqCreate) (res int64, err *helper.ErrorStruct) {
 	if errValidate := usecaseValidation(data); errValidate != nil {
 		log.Println(errValidate)
 		return res, errValidate
 	}
 
-	resRepo, errRepo := alc.activitiesrepository.CreateActivities(ctx, repository_mysql.Activities{
+	resRepo, errRepo := acu.activitiesrepository.CreateActivities(ctx, repository_mysql.Activities{
 		Title: data.Title,
 		Email: data.Email,
 	})
 
 	if errRepo != nil {
-		helper.Logger(currentfilepath, helper.LoggerLevelError, "Error at CreateActivities", errRepo)
+		helper.Logger(acu.currentfilepath, helper.LoggerLevelError, "Error at CreateActivities", errRepo)
 		return res, &helper.ErrorStruct{
 			Code: http.StatusBadRequest,
 			Err:  errRepo,
@@ -129,7 +129,7 @@ func (alc *ActivitiesUseCaseImpl) CreateActivities(ctx context.Context, data act
 
 	return resRepo, nil
 }
-func (alc *ActivitiesUseCaseImpl) UpdateActivitiesByID(ctx context.Context, activitiesid int64, data activitiesdto.ActivitiesReqUpdate) (res string, err *helper.ErrorStruct) {
+func (acu *ActivitiesUseCaseImpl) UpdateActivitiesByID(ctx context.Context, activitiesid int64, data activitiesdto.ActivitiesReqUpdate) (res string, err *helper.ErrorStruct) {
 	if errValidate := usecaseValidation(data); errValidate != nil {
 		log.Println(errValidate)
 		return res, errValidate
@@ -143,13 +143,13 @@ func (alc *ActivitiesUseCaseImpl) UpdateActivitiesByID(ctx context.Context, acti
 		}
 	}
 
-	resRepo, errRepo := alc.activitiesrepository.UpdateActivitiesByID(ctx, activitiesid, repository_mysql.Activities{
+	resRepo, errRepo := acu.activitiesrepository.UpdateActivitiesByID(ctx, activitiesid, repository_mysql.Activities{
 		Title: data.Title,
 		Email: data.Email,
 	})
 
 	if errRepo != nil {
-		helper.Logger(currentfilepath, helper.LoggerLevelError, "Error at UpdateActivitiesByID", errRepo)
+		helper.Logger(acu.currentfilepath, helper.LoggerLevelError, "Error at UpdateActivitiesByID", errRepo)
 		return res, &helper.ErrorStruct{
 			Code: http.StatusBadRequest,
 			Err:  errRepo,
@@ -158,10 +158,10 @@ func (alc *ActivitiesUseCaseImpl) UpdateActivitiesByID(ctx context.Context, acti
 
 	return resRepo, nil
 }
-func (alc *ActivitiesUseCaseImpl) DeleteActivitiesByID(ctx context.Context, activitiesid int64) (res string, err *helper.ErrorStruct) {
-	resRepo, errRepo := alc.activitiesrepository.DeleteActivitiesByID(ctx, activitiesid)
+func (acu *ActivitiesUseCaseImpl) DeleteActivitiesByID(ctx context.Context, activitiesid int64) (res string, err *helper.ErrorStruct) {
+	resRepo, errRepo := acu.activitiesrepository.DeleteActivitiesByID(ctx, activitiesid)
 	if errRepo != nil {
-		helper.Logger(currentfilepath, helper.LoggerLevelError, "Error at DeleteActivitiesByID", errRepo)
+		helper.Logger(acu.currentfilepath, helper.LoggerLevelError, "Error at DeleteActivitiesByID", errRepo)
 		return res, &helper.ErrorStruct{
 			Code: http.StatusBadRequest,
 			Err:  errRepo,

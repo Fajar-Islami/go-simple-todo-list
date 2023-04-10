@@ -50,7 +50,7 @@ func (uc *ActivitiesControllerImpl) GetAllActivities(ctx *fiber.Ctx) error {
 		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, err.Err.Error(), nil, err.Code)
 	}
 
-	return helper.BuildResponse(ctx, true, helper.SUCCEEDGETDATA, "", res, fiber.StatusOK)
+	return helper.BuildResponse(ctx, true, helper.SUCCEEDGETDATA, "", res, http.StatusOK)
 }
 
 func (uc *ActivitiesControllerImpl) GetActivitiesByID(ctx *fiber.Ctx) error {
@@ -70,7 +70,7 @@ func (uc *ActivitiesControllerImpl) GetActivitiesByID(ctx *fiber.Ctx) error {
 		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, err.Err.Error(), nil, err.Code)
 	}
 
-	return helper.BuildResponse(ctx, true, helper.SUCCEEDGETDATA, "", res, fiber.StatusOK)
+	return helper.BuildResponse(ctx, true, helper.SUCCEEDGETDATA, "", res, http.StatusOK)
 }
 
 func (uc *ActivitiesControllerImpl) CreateActivities(ctx *fiber.Ctx) error {
@@ -88,7 +88,7 @@ func (uc *ActivitiesControllerImpl) CreateActivities(ctx *fiber.Ctx) error {
 		return helper.BuildResponse(ctx, false, helper.FAILEDPOSTDATA, err.Err.Error(), nil, err.Code)
 	}
 
-	return helper.BuildResponse(ctx, true, helper.SUCCEEDPOSTDATA, "", res, fiber.StatusOK)
+	return helper.BuildResponse(ctx, true, helper.SUCCEEDPOSTDATA, "", res, http.StatusOK)
 }
 
 func (uc *ActivitiesControllerImpl) UpdateActivitiesByID(ctx *fiber.Ctx) error {
@@ -115,7 +115,7 @@ func (uc *ActivitiesControllerImpl) UpdateActivitiesByID(ctx *fiber.Ctx) error {
 		return helper.BuildResponse(ctx, false, helper.FAILEDUPDATEDATA, err.Err.Error(), nil, err.Code)
 	}
 
-	return helper.BuildResponse(ctx, true, helper.SUCCEEDUPDATEDATA, "", res, fiber.StatusOK)
+	return helper.BuildResponse(ctx, true, helper.SUCCEEDUPDATEDATA, "", res, http.StatusOK)
 }
 
 func (uc *ActivitiesControllerImpl) DeleteActivitiesByID(ctx *fiber.Ctx) error {
@@ -135,5 +135,5 @@ func (uc *ActivitiesControllerImpl) DeleteActivitiesByID(ctx *fiber.Ctx) error {
 		return helper.BuildResponse(ctx, false, helper.FAILEDDELETEDATA, err.Err.Error(), nil, err.Code)
 	}
 
-	return helper.BuildResponse(ctx, true, helper.SUCCEEDDELETEDATA, "", res, fiber.StatusOK)
+	return helper.BuildResponse(ctx, true, helper.SUCCEEDDELETEDATA, "", res, http.StatusOK)
 }

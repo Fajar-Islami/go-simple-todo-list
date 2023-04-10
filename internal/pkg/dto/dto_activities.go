@@ -13,12 +13,12 @@ type ActivitiesFilter struct {
 
 type ActivitiesReqCreate struct {
 	Title string `json:"title" validate:"required" error:"title is required"`
-	Email string `json:"email" validate:"required" error:"email is required"`
+	Email string `json:"email" validate:"email,required" error:"email is required"`
 }
 
 type ActivitiesReqUpdate struct {
 	Title string `json:"title,omitempty" validate:"omitempty,required"`
-	Email string `json:"email,omitempty" validate:"omitempty,required"`
+	Email string `json:"email,omitempty" validate:"omitempty,email,required"`
 }
 
 func (a ActivitiesReqUpdate) Validate() error {
