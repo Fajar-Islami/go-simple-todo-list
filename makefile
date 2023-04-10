@@ -1,4 +1,3 @@
-registry:=registry.hub.docker.com
 username:=ahmadfajarislami
 image:=go_todo_list
 tags:=latest
@@ -49,11 +48,11 @@ run.env:
 	docker compose up -d mysql_go_todo_list
 
 docker.build:
-	docker build --rm -t ${registry}/${username}/${image}:${tags} .
+	docker build --rm -t ${username}/${image}:${tags} .
 	docker image prune --filter label=stage=dockerbuilder -f
 
 docker.run:
-	docker run --name ${image} -p 8080:8080 ${registry}/${username}/${image}:${tags}
+	docker run --name ${image} -p 8080:8080 ${username}/${image}:${tags}
 
 dc.up: ## up compose image
 	docker compose -f docker-compose.yaml up -d
@@ -69,20 +68,20 @@ dc.down: ## rm compose image
 
 
 docker.rm:
-	docker rm ${registry}/${username}/${image}:${tags} -f
-	docker rmi ${registry}/${username}/${image}:${tags}
+	docker rm ${username}/${image}:${tags} -f
+	docker rmi ${username}/${image}:${tags}
 
 docker.enter:
 	docker exec -it ${image} bash
 
 docker.enterimg:
-	docker run -it --entrypoint sh  ${registry}/${username}/${image}:${tags}
+	docker run -it --entrypoint sh  ${username}/${image}:${tags}
 
 dc.check:
 	 docker compose -f docker-compose.yaml config
 	 
 push-image: dockerbuild
-	docker push ${registry}/${username}/${image}:${tags}
+	docker push ${username}/${image}:${tags}
 
 flysecret:
 	flyctl secrets set $(cat .env | xargs)
