@@ -24,8 +24,8 @@ services:
       - networks_go_todo_list
     ports:
       - ${apps_httpport}:3030
-    env_file:
-      - .env
+    # env_file:
+    #   - .env
     environment:
       - mysql_host=mysql_go_todo_list
     restart: on-failure

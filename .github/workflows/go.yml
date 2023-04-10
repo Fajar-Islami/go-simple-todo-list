@@ -7,25 +7,25 @@ on:
       - master
 
 jobs:
-  build:
-    name: Build Binary and Docker Image
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+  # build:
+  #   name: Build Binary and Docker Image
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: 1.18
+  #     - name: Set up Go
+  #       uses: actions/setup-go@v3
+  #       with:
+  #         go-version: 1.18
 
-      - name: Build Binary
-        run: make build
+  #     - name: Build Binary
+  #       run: make build
       
-      - name: Build image
-        run: make docker.build
+  #     - name: Build image
+  #       run: make docker.build
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+  #     - name: Set up Docker Buildx
+  #       uses: docker/setup-buildx-action@v2
 
   push-image:
     name: Push Image to Docker Hub

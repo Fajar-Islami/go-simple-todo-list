@@ -47,7 +47,6 @@ type (
 )
 
 func Initcont(filename string) {
-	fmt.Println("os.Environ() : ", os.Environ())
 	err := godotenv.Load(fmt.Sprintf("%s/%s", helper.ProjectRootPath, filename))
 	if err != nil {
 		helper.Logger(currentfilepath, helper.LoggerLevelError, "", fmt.Errorf("error when loadenv : %s", err.Error()))
