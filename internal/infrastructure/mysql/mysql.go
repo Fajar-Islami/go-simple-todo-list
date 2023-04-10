@@ -10,32 +10,32 @@ import (
 )
 
 type MysqlConf struct {
-	Username           string `env:"mysql_username"`
-	Password           string `env:"mysql_password"`
-	DbName             string `env:"mysql_dbname"`
-	Host               string `env:"mysql_host"`
-	Port               int    `env:"mysql_port"`
-	Schema             string `env:"mysql_schema"`
-	LogMode            bool   `env:"mysql_logMode"`
-	MaxLifetime        int    `env:"mysql_maxLifetime"`
-	MinIdleConnections int    `env:"mysql_minIdleConnections"`
-	MaxOpenConnections int    `env:"mysql_maxOpenConnections"`
+	Username           string `env:"MYSQL_USER"`
+	Password           string `env:"MYSQL_PASSWORD"`
+	DbName             string `env:"MYSQL_DBNAME"`
+	Host               string `env:"MYSQL_HOST"`
+	Port               int    `env:"MYSQL_PORT"`
+	Schema             string `env:"MYSQL_schema"`
+	LogMode            bool   `env:"MYSQL_logMode"`
+	MaxLifetime        int    `env:"MYSQL_maxLifetime"`
+	MinIdleConnections int    `env:"MYSQL_minIdleConnections"`
+	MaxOpenConnections int    `env:"MYSQL_maxOpenConnections"`
 }
 
 const currentfilepath = "internal/infrastructure/mysql/mysql.go"
 
 func DatabaseInit() *sql.DB {
 	var mysqlConfig = MysqlConf{
-		Username:           utils.EnvString("mysql_username"),
-		Password:           utils.EnvString("mysql_password"),
-		DbName:             utils.EnvString("mysql_dbname"),
-		Host:               utils.EnvString("mysql_host"),
-		Port:               utils.EnvInt("mysql_port"),
-		Schema:             utils.EnvString("mysql_schema"),
-		LogMode:            utils.EnvBool("mysql_logMode"),
-		MaxLifetime:        utils.EnvInt("mysql_maxLifetime"),
-		MinIdleConnections: utils.EnvInt("mysql_minIdleConnections"),
-		MaxOpenConnections: utils.EnvInt("mysql_maxOpenConnections"),
+		Username:           utils.EnvString("MYSQL_USER"),
+		Password:           utils.EnvString("MYSQL_PASSWORD"),
+		DbName:             utils.EnvString("MYSQL_DBNAME"),
+		Host:               utils.EnvString("MYSQL_HOST"),
+		Port:               utils.EnvInt("MYSQL_PORT"),
+		Schema:             utils.EnvString("MYSQL_schema"),
+		LogMode:            utils.EnvBool("MYSQL_logMode"),
+		MaxLifetime:        utils.EnvInt("MYSQL_maxLifetime"),
+		MinIdleConnections: utils.EnvInt("MYSQL_minIdleConnections"),
+		MaxOpenConnections: utils.EnvInt("MYSQL_maxOpenConnections"),
 	}
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", mysqlConfig.Username, mysqlConfig.Password, mysqlConfig.Host, mysqlConfig.Port, mysqlConfig.DbName)

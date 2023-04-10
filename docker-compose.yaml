@@ -18,16 +18,16 @@ services:
 
   go_todo_list:
     build: .
-    image: go_todo_list
+    image: ahmadfajarislami/go_todo_list
     container_name: go_todo_list
     networks:
       - networks_go_todo_list
     ports:
-      - 8090:3030
+      - ${apps_httpport}:3030
     env_file:
       - .env
     environment:
-      - MYSQL_HOST=mysql_go_todo_list
+      - mysql_host=mysql_go_todo_list
     restart: on-failure
     depends_on:
       - mysql_go_todo_list

@@ -79,7 +79,7 @@ docker.enterimg:
 	docker run -it --entrypoint sh  ${registry}/${username}/${image}:${tags}
 
 dc.check:
-	 docker compose -f docker-compose-app.yaml config
+	 docker compose -f docker-compose.yaml config
 	 
 push-image: dockerbuild
 	docker push ${registry}/${username}/${image}:${tags}
