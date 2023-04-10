@@ -22,7 +22,6 @@ func HTTPRouteInit(containerConf *container.Container) {
 	app.Use(logger.New())
 	app.Use(cors.New())
 	app.Use(recover.New())
-	fmt.Println("os.Environ() : ", os.Environ())
 
 	app.Get("", HealthCheck)
 

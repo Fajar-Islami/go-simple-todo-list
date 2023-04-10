@@ -3,6 +3,7 @@ package mysql
 import (
 	"database/sql"
 	"fmt"
+	"os"
 	"time"
 
 	"go-todo-list/internal/helper"
@@ -37,6 +38,9 @@ func DatabaseInit() *sql.DB {
 		MinIdleConnections: utils.EnvInt("MYSQL_minIdleConnections"),
 		MaxOpenConnections: utils.EnvInt("MYSQL_maxOpenConnections"),
 	}
+
+	fmt.Println("os.Environ() : ", os.Environ())
+	fmt.Println("mysqlconfig : ", mysqlConfig)
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", mysqlConfig.Username, mysqlConfig.Password, mysqlConfig.Host, mysqlConfig.Port, mysqlConfig.DbName)
 
