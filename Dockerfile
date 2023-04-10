@@ -18,6 +18,7 @@ FROM alpine:3.9
 WORKDIR /app
 COPY --from=build /app/apps /app/apps
 COPY --from=build /app/docs /app/docs
+COPY --from=build /app/migrations /app/migrations
 RUN mkdir /app/logs
 
 EXPOSE 8090

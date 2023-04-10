@@ -18,7 +18,7 @@ services:
 
   go_todo_list:
     build: .
-    image: ahmadfajarislami/go_todo_list
+    image: go_todo_list
     container_name: go_todo_list
     networks:
       - networks_go_todo_list

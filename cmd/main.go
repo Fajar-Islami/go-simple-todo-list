@@ -36,7 +36,9 @@ func migration(db *sql.DB) {
 	}
 	log.Println("Running migration")
 	if err := m.Up(); err != nil {
-		log.Fatal("err migrate up ", err)
+		if err.Error() != "no change" {
+			log.Fatal("err migrate up ", err)
+		}
 	}
 	log.Println("Migration Done!!!")
 }
