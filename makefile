@@ -1,6 +1,6 @@
-registry:=ghcr.io
-username:=fajar-islami
-image:=go-simple-user-crud
+registry:=registry.hub.docker.com
+username:=ahmadfajarislami
+image:=go_todo_list
 tags:=latest
 
 
