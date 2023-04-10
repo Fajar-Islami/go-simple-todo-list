@@ -53,7 +53,6 @@ func Initcont(filename string) {
 	}
 
 	helper.Logger(currentfilepath, helper.LoggerLevelInfo, "Succeed read environment variable", nil)
-	helper.Logger(currentfilepath, helper.LoggerLevelInfo, fmt.Sprint(os.Environ()), nil)
 }
 
 func AppsInit() Apps {
