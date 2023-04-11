@@ -18,9 +18,9 @@ func main() {
 
 	defer contConf.Mysqldb.Close()
 
-	fmt.Println("contConf.Mysqldb", fmt.Sprintf("%#v \n\n", contConf.Mysqldb.Stats()))
+	// fmt.Println("contConf.Mysqldb", fmt.Sprintf("%#v \n\n", contConf.Mysqldb.Stats()))
 	// mysqlConfig.Host, mysqlConfig.Port, mysqlConfig.DbName
-	migration(contConf.Mysqldb)
+	// migration(contConf.Mysqldb)
 
 	rest.HTTPRouteInit(contConf)
 }
@@ -31,8 +31,6 @@ func migration(db *sql.DB) {
 	if err != nil {
 		log.Println("err", err)
 	}
-
-	defer driver.Close()
 
 	m, err := migrate.NewWithDatabaseInstance("file://migrations", "mysql", driver)
 	if err != nil {

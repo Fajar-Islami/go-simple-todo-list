@@ -2,6 +2,7 @@ package http
 
 import (
 	"context"
+	"fmt"
 	"go-todo-list/internal/delivery/http/handler"
 	"go-todo-list/internal/infrastructure/container"
 	"net/http"
@@ -33,9 +34,12 @@ func HTTPRouteInit(containerConf *container.Container) {
 	handler.TodosRoute(todoApi, containerConf)
 
 	// Start server
-	// port := fmt.Sprintf("%s:%d", containerConf.Apps.Host, containerConf.Apps.HttpPort)
+	port := fmt.Sprintf("%s:%d", containerConf.Apps.Host, containerConf.Apps.HttpPort)
+	if containerConf.Apps.HttpPort == 0 {
+		port = ":8090"
+	}
 	go func() {
-		if err := app.Listen("localhost:8090"); err != nil && err != http.ErrServerClosed {
+		if err := app.Listen(port); err != nil && err != http.ErrServerClosed {
 			app.Server().Logger.Printf("shutting down the server : ", err)
 		}
 	}()

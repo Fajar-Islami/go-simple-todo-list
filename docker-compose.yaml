@@ -23,7 +23,7 @@ services:
     networks:
       - networks_go_todo_list
     ports:
-      - ${apps_httpport}:3030
+      - 3030:${apps_httpport}
     env_file:
       - .env
     environment:
