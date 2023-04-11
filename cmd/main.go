@@ -20,7 +20,7 @@ func main() {
 
 	// fmt.Println("contConf.Mysqldb", fmt.Sprintf("%#v \n\n", contConf.Mysqldb.Stats()))
 	// mysqlConfig.Host, mysqlConfig.Port, mysqlConfig.DbName
-	// migration(contConf.Mysqldb)
+	migration(contConf.Mysqldb)
 
 	rest.HTTPRouteInit(contConf)
 }
