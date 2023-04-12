@@ -11,8 +11,8 @@ import (
 type ActivitiesRepository interface {
 	GetAllActivities(ctx context.Context, params FilterActivities) (res []Activities, err error)
 	GetActivitiesByID(ctx context.Context, activitiesid int64) (res Activities, err error)
-	CreateActivities(ctx context.Context, data Activities) (res int64, err error)
-	UpdateActivitiesByID(ctx context.Context, activitiesid int64, data Activities) (res string, err error)
+	CreateActivities(ctx context.Context, data Activities) (res Activities, err error)
+	UpdateActivitiesByID(ctx context.Context, activitiesid int64, data Activities) (res Activities, err error)
 	DeleteActivitiesByID(ctx context.Context, activitiesid int64) (res string, err error)
 }
 
@@ -72,7 +72,7 @@ func (acr *ActivitiesRepositoryImpl) GetActivitiesByID(ctx context.Context, acti
 
 }
 
-func (acr *ActivitiesRepositoryImpl) CreateActivities(ctx context.Context, data Activities) (res int64, err error) {
+func (acr *ActivitiesRepositoryImpl) CreateActivities(ctx context.Context, data Activities) (res Activities, err error) {
 	db := acr.db
 	sql := fmt.Sprintf("insert into %s(title,email) values (?,?)", acr.tablename)
 
@@ -86,10 +86,15 @@ func (acr *ActivitiesRepositoryImpl) CreateActivities(ctx context.Context, data 
 		return res, err
 	}
 
-	return id, nil
+	res, err = acr.GetActivitiesByID(ctx, id)
+	if err != nil {
+		return res, err
+	}
+
+	return res, nil
 }
 
-func (acr *ActivitiesRepositoryImpl) UpdateActivitiesByID(ctx context.Context, activitiesid int64, data Activities) (res string, err error) {
+func (acr *ActivitiesRepositoryImpl) UpdateActivitiesByID(ctx context.Context, activitiesid int64, data Activities) (res Activities, err error) {
 	db := acr.db
 
 	_, err = acr.GetActivitiesByID(ctx, activitiesid)
@@ -114,10 +119,15 @@ func (acr *ActivitiesRepositoryImpl) UpdateActivitiesByID(ctx context.Context, a
 
 	_, err = db.ExecContext(ctx, sql, args...)
 	if err != nil {
-		return helper.UpdateDataFailed, err
+		return res, err
 	}
 
-	return helper.UpdateDataSucceed, nil
+	res, err = acr.GetActivitiesByID(ctx, activitiesid)
+	if err != nil {
+		return res, err
+	}
+
+	return res, nil
 }
 
 func (acr *ActivitiesRepositoryImpl) DeleteActivitiesByID(ctx context.Context, activitiesid int64) (res string, err error) {

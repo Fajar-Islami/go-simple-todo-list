@@ -23,7 +23,14 @@ func usecaseValidation(params any) *helper.ErrorStruct {
 			getField, _ := reflect.TypeOf(params).FieldByName(val.Field())
 			jsonTag := getField.Tag.Get("json")
 
-			message := fmt.Sprintf("validation error for '%s', Tag: %s", jsonTag, val.Tag())
+			var message string
+			switch val.Tag() {
+			case "required":
+				message = fmt.Sprintf("%s cannot be null", jsonTag)
+			default:
+				message = fmt.Sprintf("validation error for '%s', Tag: %s", jsonTag, val.Tag())
+			}
+
 			newErr.Message = append(newErr.Message, message)
 		}
 

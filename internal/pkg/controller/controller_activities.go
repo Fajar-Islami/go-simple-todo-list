@@ -35,9 +35,7 @@ func (uc *ActivitiesControllerImpl) GetAllActivities(ctx *fiber.Ctx) error {
 	filter := new(activitiesdto.ActivitiesFilter)
 	if err := ctx.QueryParser(filter); err != nil {
 		log.Println(err)
-		return ctx.Status(http.StatusBadRequest).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return helper.BuildResponse(ctx, false, err.Error(), nil, http.StatusBadRequest)
 	}
 
 	res, err := uc.activitiesusecase.GetAllActivities(c, activitiesdto.ActivitiesFilter{
@@ -47,30 +45,30 @@ func (uc *ActivitiesControllerImpl) GetAllActivities(ctx *fiber.Ctx) error {
 	})
 
 	if err != nil {
-		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, err.Err.Error(), nil, err.Code)
+		return helper.BuildResponse(ctx, false, err.Err.Error(), nil, err.Code)
 	}
 
-	return helper.BuildResponse(ctx, true, helper.SUCCEEDGETDATA, "", res, http.StatusOK)
+	return helper.BuildResponse(ctx, true, helper.SUCCEEDGETDATA, res, http.StatusOK)
 }
 
 func (uc *ActivitiesControllerImpl) GetActivitiesByID(ctx *fiber.Ctx) error {
 	c := ctx.Context()
 	activitiesid := ctx.Params("id_activities")
 	if activitiesid == "" {
-		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, "id_activities is required", nil, http.StatusBadRequest)
+		return helper.BuildResponse(ctx, false, "id_activities cant be empty", nil, http.StatusBadRequest)
 	}
 
 	activId, errConv := strconv.Atoi(activitiesid)
 	if errConv != nil {
-		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, errConv.Error(), nil, http.StatusBadRequest)
+		return helper.BuildResponse(ctx, false, errConv.Error(), nil, http.StatusBadRequest)
 	}
 
 	res, err := uc.activitiesusecase.GetActivitiesByID(c, int64(activId))
 	if err != nil {
-		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, err.Err.Error(), nil, err.Code)
+		return helper.BuildResponse(ctx, false, err.Err.Error(), nil, err.Code)
 	}
 
-	return helper.BuildResponse(ctx, true, helper.SUCCEEDGETDATA, "", res, http.StatusOK)
+	return helper.BuildResponse(ctx, true, helper.SUCCEEDGETDATA, res, http.StatusOK)
 }
 
 func (uc *ActivitiesControllerImpl) CreateActivities(ctx *fiber.Ctx) error {
@@ -79,61 +77,61 @@ func (uc *ActivitiesControllerImpl) CreateActivities(ctx *fiber.Ctx) error {
 	data := new(activitiesdto.ActivitiesReqCreate)
 	if err := ctx.BodyParser(data); err != nil {
 		if err != nil {
-			return helper.BuildResponse(ctx, false, helper.FAILEDPOSTDATA, err.Error(), nil, http.StatusBadRequest)
+			return helper.BuildResponse(ctx, false, err.Error(), nil, http.StatusBadRequest)
 		}
 	}
 
 	res, err := uc.activitiesusecase.CreateActivities(c, *data)
 	if err != nil {
-		return helper.BuildResponse(ctx, false, helper.FAILEDPOSTDATA, err.Err.Error(), nil, err.Code)
+		return helper.BuildResponse(ctx, false, err.Err.Error(), nil, err.Code)
 	}
 
-	return helper.BuildResponse(ctx, true, helper.SUCCEEDPOSTDATA, "", res, http.StatusOK)
+	return helper.BuildResponse(ctx, true, helper.SUCCEEDPOSTDATA, res, http.StatusCreated)
 }
 
 func (uc *ActivitiesControllerImpl) UpdateActivitiesByID(ctx *fiber.Ctx) error {
 	c := ctx.Context()
 	activitiesid := ctx.Params("id_activities")
 	if activitiesid == "" {
-		return helper.BuildResponse(ctx, false, helper.FAILEDUPDATEDATA, "id_activities is required", nil, http.StatusBadRequest)
+		return helper.BuildResponse(ctx, false, "id_activities cant be empty", nil, http.StatusBadRequest)
 	}
 
 	data := new(activitiesdto.ActivitiesReqUpdate)
 	if err := ctx.BodyParser(data); err != nil {
 		if err != nil {
-			return helper.BuildResponse(ctx, false, helper.FAILEDUPDATEDATA, err.Error(), nil, http.StatusBadRequest)
+			return helper.BuildResponse(ctx, false, err.Error(), nil, http.StatusBadRequest)
 		}
 	}
 
 	activId, errConv := strconv.Atoi(activitiesid)
 	if errConv != nil {
-		return helper.BuildResponse(ctx, false, helper.FAILEDUPDATEDATA, errConv.Error(), nil, http.StatusBadRequest)
+		return helper.BuildResponse(ctx, false, errConv.Error(), nil, http.StatusBadRequest)
 	}
 
 	res, err := uc.activitiesusecase.UpdateActivitiesByID(c, int64(activId), *data)
 	if err != nil {
-		return helper.BuildResponse(ctx, false, helper.FAILEDUPDATEDATA, err.Err.Error(), nil, err.Code)
+		return helper.BuildResponse(ctx, false, err.Err.Error(), nil, err.Code)
 	}
 
-	return helper.BuildResponse(ctx, true, helper.SUCCEEDUPDATEDATA, "", res, http.StatusOK)
+	return helper.BuildResponse(ctx, true, helper.SUCCEEDUPDATEDATA, res, http.StatusOK)
 }
 
 func (uc *ActivitiesControllerImpl) DeleteActivitiesByID(ctx *fiber.Ctx) error {
 	c := ctx.Context()
 	activitiesid := ctx.Params("id_activities")
 	if activitiesid == "" {
-		return helper.BuildResponse(ctx, false, helper.FAILEDDELETEDATA, "id_activities is required", nil, http.StatusBadRequest)
+		return helper.BuildResponse(ctx, false, "id_activities cant be empty", nil, http.StatusBadRequest)
 	}
 
 	activId, errConv := strconv.Atoi(activitiesid)
 	if errConv != nil {
-		return helper.BuildResponse(ctx, false, helper.FAILEDDELETEDATA, errConv.Error(), nil, http.StatusBadRequest)
+		return helper.BuildResponse(ctx, false, errConv.Error(), nil, http.StatusBadRequest)
 	}
 
-	res, err := uc.activitiesusecase.DeleteActivitiesByID(c, int64(activId))
+	err := uc.activitiesusecase.DeleteActivitiesByID(c, int64(activId))
 	if err != nil {
-		return helper.BuildResponse(ctx, false, helper.FAILEDDELETEDATA, err.Err.Error(), nil, err.Code)
+		return helper.BuildResponse(ctx, false, err.Err.Error(), nil, err.Code)
 	}
 
-	return helper.BuildResponse(ctx, true, helper.SUCCEEDDELETEDATA, "", res, http.StatusOK)
+	return helper.BuildResponse(ctx, true, helper.SUCCEEDDELETEDATA, helper.EmptyMap, http.StatusOK)
 }

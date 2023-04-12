@@ -34,11 +34,11 @@ func (a TodosReqUpdate) Validate() error {
 }
 
 type TodosResp struct {
-	TodoID          int64     `json:"todo_id"`
+	TodoID          int64     `json:"id"`
 	ActivityGroupID int64     `json:"activity_group_id"`
 	Title           string    `json:"title"`
 	Priority        string    `json:"priority"`
 	IsActive        bool      `json:"is_active"`
-	CreatedAt       time.Time `json:"created_at"`
-	UpdatedAt       time.Time `json:"updated_at"`
+	CreatedAt       time.Time `json:"createdAt"`
+	UpdatedAt       time.Time `json:"updatedAt"`
 }

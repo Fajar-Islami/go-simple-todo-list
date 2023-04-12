@@ -1,29 +1,40 @@
 package helper
 
 import (
-	"strings"
-
 	"github.com/gofiber/fiber/v2"
 )
 
 type Response struct {
-	Status  bool        `json:"status"`
+	Status  string      `json:"status"`
 	Message string      `json:"message"`
-	Errors  interface{} `json:"errors"`
-	Data    interface{} `json:"data"`
+	Data    interface{} `json:"data,omitempty"`
 }
 
-func BuildResponse(ctx *fiber.Ctx, status bool, message string, err string, data interface{}, code int) error {
-	var splittedError []string
+const (
+	Success    = "Success"
+	NotFound   = "Not Found"
+	BadRequest = "Bad Request"
+)
 
-	if len(err) > 0 {
-		splittedError = strings.Split(err, "\n")
+var EmptyMap = fiber.Map{}
+
+func BuildResponse(ctx *fiber.Ctx, status bool, message string, data interface{}, code int) error {
+	var statusStr string
+	if status {
+		statusStr = Success
+		message = Success
+	} else {
+		switch code {
+		case 400:
+			statusStr = BadRequest
+		case 404:
+			statusStr = NotFound
+		}
 	}
 
 	return ctx.Status(code).JSON(&Response{
-		Status:  status,
+		Status:  statusStr,
 		Message: message,
-		Errors:  splittedError,
 		Data:    data,
 	})
 }

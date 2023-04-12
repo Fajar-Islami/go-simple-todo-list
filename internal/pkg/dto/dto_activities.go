@@ -23,15 +23,15 @@ type ActivitiesReqUpdate struct {
 
 func (a ActivitiesReqUpdate) Validate() error {
 	if a.Title == "" && a.Email == "" {
-		return fmt.Errorf("At least one field must be set")
+		return fmt.Errorf("title cannot be null")
 	}
 	return nil
 }
 
 type ActivitiesResp struct {
-	ActivityID int64     `json:"activity_id"`
+	ActivityID int64     `json:"id"`
 	Title      string    `json:"title"`
 	Email      string    `json:"email"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
+	CreatedAt  time.Time `json:"createdAt"`
+	UpdatedAt  time.Time `json:"updatedAt"`
 }

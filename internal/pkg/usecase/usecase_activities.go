@@ -10,14 +10,15 @@ import (
 	"go-todo-list/internal/utils"
 	"log"
 	"net/http"
+	"strings"
 )
 
 type ActivitiesUseCase interface {
 	GetAllActivities(ctx context.Context, params activitiesdto.ActivitiesFilter) (res []activitiesdto.ActivitiesResp, err *helper.ErrorStruct)
 	GetActivitiesByID(ctx context.Context, activitiesid int64) (res activitiesdto.ActivitiesResp, err *helper.ErrorStruct)
-	CreateActivities(ctx context.Context, data activitiesdto.ActivitiesReqCreate) (res int64, err *helper.ErrorStruct)
-	UpdateActivitiesByID(ctx context.Context, activitiesid int64, data activitiesdto.ActivitiesReqUpdate) (res string, err *helper.ErrorStruct)
-	DeleteActivitiesByID(ctx context.Context, activitiesid int64) (res string, err *helper.ErrorStruct)
+	CreateActivities(ctx context.Context, data activitiesdto.ActivitiesReqCreate) (res activitiesdto.ActivitiesResp, err *helper.ErrorStruct)
+	UpdateActivitiesByID(ctx context.Context, activitiesid int64, data activitiesdto.ActivitiesReqUpdate) (res activitiesdto.ActivitiesResp, err *helper.ErrorStruct)
+	DeleteActivitiesByID(ctx context.Context, activitiesid int64) (err *helper.ErrorStruct)
 }
 
 type ActivitiesUseCaseImpl struct {
@@ -94,10 +95,8 @@ func (acu *ActivitiesUseCaseImpl) GetActivitiesByID(ctx context.Context, activit
 
 	if errRepo != nil {
 		helper.Logger(acu.currentfilepath, helper.LoggerLevelError, "Error at GetActivitiesByID", errRepo)
-		return res, &helper.ErrorStruct{
-			Code: http.StatusBadRequest,
-			Err:  errRepo,
-		}
+		err = acu.helperError(errRepo)
+		return res, err
 	}
 
 	return activitiesdto.ActivitiesResp{
@@ -108,7 +107,8 @@ func (acu *ActivitiesUseCaseImpl) GetActivitiesByID(ctx context.Context, activit
 		UpdatedAt:  resRepo.UpdatedAt.Time,
 	}, nil
 }
-func (acu *ActivitiesUseCaseImpl) CreateActivities(ctx context.Context, data activitiesdto.ActivitiesReqCreate) (res int64, err *helper.ErrorStruct) {
+
+func (acu *ActivitiesUseCaseImpl) CreateActivities(ctx context.Context, data activitiesdto.ActivitiesReqCreate) (res activitiesdto.ActivitiesResp, err *helper.ErrorStruct) {
 	if errValidate := usecaseValidation(data); errValidate != nil {
 		log.Println(errValidate)
 		return res, errValidate
@@ -127,9 +127,16 @@ func (acu *ActivitiesUseCaseImpl) CreateActivities(ctx context.Context, data act
 		}
 	}
 
-	return resRepo, nil
+	return activitiesdto.ActivitiesResp{
+		ActivityID: resRepo.ActivityID,
+		Title:      resRepo.Title,
+		Email:      resRepo.Email,
+		CreatedAt:  utils.DateFormatter(resRepo.CreatedAt.Time),
+		UpdatedAt:  utils.DateFormatter(resRepo.UpdatedAt.Time),
+	}, nil
 }
-func (acu *ActivitiesUseCaseImpl) UpdateActivitiesByID(ctx context.Context, activitiesid int64, data activitiesdto.ActivitiesReqUpdate) (res string, err *helper.ErrorStruct) {
+
+func (acu *ActivitiesUseCaseImpl) UpdateActivitiesByID(ctx context.Context, activitiesid int64, data activitiesdto.ActivitiesReqUpdate) (res activitiesdto.ActivitiesResp, err *helper.ErrorStruct) {
 	if errValidate := usecaseValidation(data); errValidate != nil {
 		log.Println(errValidate)
 		return res, errValidate
@@ -150,23 +157,36 @@ func (acu *ActivitiesUseCaseImpl) UpdateActivitiesByID(ctx context.Context, acti
 
 	if errRepo != nil {
 		helper.Logger(acu.currentfilepath, helper.LoggerLevelError, "Error at UpdateActivitiesByID", errRepo)
-		return res, &helper.ErrorStruct{
-			Code: http.StatusBadRequest,
-			Err:  errRepo,
-		}
+		err = acu.helperError(errRepo)
+		return res, err
 	}
 
-	return resRepo, nil
+	return activitiesdto.ActivitiesResp{
+		ActivityID: resRepo.ActivityID,
+		Title:      resRepo.Title,
+		Email:      resRepo.Email,
+		CreatedAt:  utils.DateFormatter(resRepo.CreatedAt.Time),
+		UpdatedAt:  utils.DateFormatter(resRepo.UpdatedAt.Time),
+	}, nil
 }
-func (acu *ActivitiesUseCaseImpl) DeleteActivitiesByID(ctx context.Context, activitiesid int64) (res string, err *helper.ErrorStruct) {
-	resRepo, errRepo := acu.activitiesrepository.DeleteActivitiesByID(ctx, activitiesid)
+func (acu *ActivitiesUseCaseImpl) DeleteActivitiesByID(ctx context.Context, activitiesid int64) (err *helper.ErrorStruct) {
+	_, errRepo := acu.activitiesrepository.DeleteActivitiesByID(ctx, activitiesid)
 	if errRepo != nil {
-		helper.Logger(acu.currentfilepath, helper.LoggerLevelError, "Error at DeleteActivitiesByID", errRepo)
-		return res, &helper.ErrorStruct{
-			Code: http.StatusBadRequest,
-			Err:  errRepo,
-		}
+		return acu.helperError(errRepo)
 	}
 
-	return resRepo, nil
+	return nil
+}
+
+func (acu *ActivitiesUseCaseImpl) helperError(err error) *helper.ErrorStruct {
+	if strings.Contains(err.Error(), "Not Found") {
+		return &helper.ErrorStruct{
+			Code: http.StatusNotFound,
+			Err:  err,
+		}
+	}
+	return &helper.ErrorStruct{
+		Code: http.StatusBadRequest,
+		Err:  err,
+	}
 }
