@@ -17,8 +17,7 @@ services:
        MYSQL_DATABASE : todo4
 
   go_todo_list:
-    build: .
-    image: go_todo_list
+    image: ahmadfajarislami/go_todo_list:master
     container_name: go_todo_list
     networks:
       - networks_go_todo_list

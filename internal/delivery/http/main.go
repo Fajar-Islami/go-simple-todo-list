@@ -34,7 +34,7 @@ func HTTPRouteInit(containerConf *container.Container) {
 	// Start server
 	port := fmt.Sprintf("%s:%d", containerConf.Apps.Host, containerConf.Apps.HttpPort)
 	if containerConf.Apps.HttpPort == 0 {
-		port = ":8090"
+		port = ":3030"
 	}
 	go func() {
 		if err := app.Listen(port); err != nil && err != http.ErrServerClosed {
