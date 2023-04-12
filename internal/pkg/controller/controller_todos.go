@@ -35,7 +35,7 @@ func (tc *TodosControllerImpl) GetAllTodos(ctx *fiber.Ctx) error {
 	filter := new(todosdto.TodosFilter)
 	if err := ctx.QueryParser(filter); err != nil {
 		log.Println(err)
-		return helper.BuildResponse(ctx, false, helper.FAILEDPOSTDATA, nil, http.StatusBadRequest)
+		return helper.BuildResponse(ctx, false, err.Error(), nil, http.StatusBadRequest)
 	}
 
 	res, err := tc.todosusecase.GetAllTodos(c, todosdto.TodosFilter{
@@ -46,7 +46,7 @@ func (tc *TodosControllerImpl) GetAllTodos(ctx *fiber.Ctx) error {
 	})
 
 	if err != nil {
-		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, nil, err.Code)
+		return helper.BuildResponse(ctx, false, err.Err.Error(), nil, err.Code)
 	}
 
 	return helper.BuildResponse(ctx, true, helper.SUCCEEDGETDATA, res, http.StatusOK)
@@ -56,17 +56,17 @@ func (tc *TodosControllerImpl) GetTodosByID(ctx *fiber.Ctx) error {
 	c := ctx.Context()
 	todosid := ctx.Params("id_todos")
 	if todosid == "" {
-		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, nil, http.StatusBadRequest)
+		return helper.BuildResponse(ctx, false, "id_todos cant be empty", nil, http.StatusBadRequest)
 	}
 
 	activId, errConv := strconv.Atoi(todosid)
 	if errConv != nil {
-		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, nil, http.StatusBadRequest)
+		return helper.BuildResponse(ctx, false, errConv.Error(), nil, http.StatusBadRequest)
 	}
 
 	res, err := tc.todosusecase.GetTodosByID(c, int64(activId))
 	if err != nil {
-		return helper.BuildResponse(ctx, false, helper.FAILEDGETDATA, nil, err.Code)
+		return helper.BuildResponse(ctx, false, err.Err.Error(), nil, err.Code)
 	}
 
 	return helper.BuildResponse(ctx, true, helper.SUCCEEDGETDATA, res, http.StatusOK)
@@ -78,40 +78,40 @@ func (tc *TodosControllerImpl) CreateTodos(ctx *fiber.Ctx) error {
 	data := new(todosdto.TodosReqCreate)
 	if err := ctx.BodyParser(data); err != nil {
 		if err != nil {
-			return helper.BuildResponse(ctx, false, helper.FAILEDPOSTDATA, nil, http.StatusBadRequest)
+			return helper.BuildResponse(ctx, false, err.Error(), nil, http.StatusBadRequest)
 		}
 	}
 
 	res, err := tc.todosusecase.CreateTodos(c, *data)
 	if err != nil {
-		return helper.BuildResponse(ctx, false, helper.FAILEDPOSTDATA, nil, err.Code)
+		return helper.BuildResponse(ctx, false, err.Err.Error(), nil, err.Code)
 	}
 
-	return helper.BuildResponse(ctx, true, helper.SUCCEEDPOSTDATA, res, http.StatusOK)
+	return helper.BuildResponse(ctx, true, helper.SUCCEEDPOSTDATA, res, http.StatusCreated)
 }
 
 func (tc *TodosControllerImpl) UpdateTodosByID(ctx *fiber.Ctx) error {
 	c := ctx.Context()
 	todosid := ctx.Params("id_todos")
 	if todosid == "" {
-		return helper.BuildResponse(ctx, false, helper.FAILEDUPDATEDATA, nil, http.StatusBadRequest)
+		return helper.BuildResponse(ctx, false, "id_todos cant be empty", nil, http.StatusBadRequest)
 	}
 
 	data := new(todosdto.TodosReqUpdate)
 	if err := ctx.BodyParser(data); err != nil {
 		if err != nil {
-			return helper.BuildResponse(ctx, false, helper.FAILEDUPDATEDATA, nil, http.StatusBadRequest)
+			return helper.BuildResponse(ctx, false, err.Error(), nil, http.StatusBadRequest)
 		}
 	}
 
 	activId, errConv := strconv.Atoi(todosid)
 	if errConv != nil {
-		return helper.BuildResponse(ctx, false, helper.FAILEDUPDATEDATA, nil, http.StatusBadRequest)
+		return helper.BuildResponse(ctx, false, errConv.Error(), nil, http.StatusBadRequest)
 	}
 
 	res, err := tc.todosusecase.UpdateTodosByID(c, int64(activId), *data)
 	if err != nil {
-		return helper.BuildResponse(ctx, false, helper.FAILEDUPDATEDATA, nil, err.Code)
+		return helper.BuildResponse(ctx, false, err.Err.Error(), nil, err.Code)
 	}
 
 	return helper.BuildResponse(ctx, true, helper.SUCCEEDUPDATEDATA, res, http.StatusOK)
@@ -121,18 +121,18 @@ func (tc *TodosControllerImpl) DeleteTodosByID(ctx *fiber.Ctx) error {
 	c := ctx.Context()
 	todosid := ctx.Params("id_todos")
 	if todosid == "" {
-		return helper.BuildResponse(ctx, false, helper.FAILEDDELETEDATA, nil, http.StatusBadRequest)
+		return helper.BuildResponse(ctx, false, "id_todos cant be empty", nil, http.StatusBadRequest)
 	}
 
 	activId, errConv := strconv.Atoi(todosid)
 	if errConv != nil {
-		return helper.BuildResponse(ctx, false, helper.FAILEDDELETEDATA, nil, http.StatusBadRequest)
+		return helper.BuildResponse(ctx, false, errConv.Error(), nil, http.StatusBadRequest)
 	}
 
-	res, err := tc.todosusecase.DeleteTodosByID(c, int64(activId))
+	err := tc.todosusecase.DeleteTodosByID(c, int64(activId))
 	if err != nil {
-		return helper.BuildResponse(ctx, false, helper.FAILEDDELETEDATA, nil, err.Code)
+		return helper.BuildResponse(ctx, false, err.Err.Error(), nil, err.Code)
 	}
 
-	return helper.BuildResponse(ctx, true, helper.SUCCEEDDELETEDATA, res, http.StatusOK)
+	return helper.BuildResponse(ctx, true, helper.SUCCEEDDELETEDATA, helper.EmptyMap, http.StatusOK)
 }

@@ -16,21 +16,20 @@ type TodosReqCreate struct {
 	ActivityGroupID int    `json:"activity_group_id" validate:"required,numeric" error:"activity_group_id is required"`
 	Priority        string `json:"priority" error:"priority is required" enum:"1,2,3,4,5"`
 	Title           string `json:"title" validate:"required" error:"title is required" enum:"very-high,high,medium,low,very-low"`
-	IsActive        *bool  `json:"is_active"`
+}
+
+func (a TodosReqCreate) Validate() error {
+	if a.Title == "" && a.ActivityGroupID == 0 && a.Priority == "" {
+		return fmt.Errorf("title cannot be null")
+	}
+	return nil
 }
 
 type TodosReqUpdate struct {
-	ActivityGroupID int    `json:"activity_group_id" validate:"numeric"`
-	Priority        string `json:"priority" `
-	Title           string `json:"title"`
-	IsActive        bool   `json:"is_active"`
-}
-
-func (a TodosReqUpdate) Validate() error {
-	if a.Title == "" && a.ActivityGroupID == 0 && a.Priority == "" {
-		return fmt.Errorf("At least one field must be set")
-	}
-	return nil
+	ActivityGroupID int    `json:"activity_group_id,omitempty"`
+	Priority        string `json:"priority,omitempty"`
+	Title           string `json:"title,omitempty"`
+	IsActive        bool   `json:"is_active,omitempty"`
 }
 
 type TodosResp struct {

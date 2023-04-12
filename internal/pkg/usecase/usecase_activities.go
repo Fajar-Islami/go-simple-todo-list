@@ -10,7 +10,6 @@ import (
 	"go-todo-list/internal/utils"
 	"log"
 	"net/http"
-	"strings"
 )
 
 type ActivitiesUseCase interface {
@@ -95,7 +94,7 @@ func (acu *ActivitiesUseCaseImpl) GetActivitiesByID(ctx context.Context, activit
 
 	if errRepo != nil {
 		helper.Logger(acu.currentfilepath, helper.LoggerLevelError, "Error at GetActivitiesByID", errRepo)
-		err = acu.helperError(errRepo)
+		err = helper.HelperErrorResponse(errRepo)
 		return res, err
 	}
 
@@ -157,7 +156,7 @@ func (acu *ActivitiesUseCaseImpl) UpdateActivitiesByID(ctx context.Context, acti
 
 	if errRepo != nil {
 		helper.Logger(acu.currentfilepath, helper.LoggerLevelError, "Error at UpdateActivitiesByID", errRepo)
-		err = acu.helperError(errRepo)
+		err = helper.HelperErrorResponse(errRepo)
 		return res, err
 	}
 
@@ -172,21 +171,8 @@ func (acu *ActivitiesUseCaseImpl) UpdateActivitiesByID(ctx context.Context, acti
 func (acu *ActivitiesUseCaseImpl) DeleteActivitiesByID(ctx context.Context, activitiesid int64) (err *helper.ErrorStruct) {
 	_, errRepo := acu.activitiesrepository.DeleteActivitiesByID(ctx, activitiesid)
 	if errRepo != nil {
-		return acu.helperError(errRepo)
+		return helper.HelperErrorResponse(errRepo)
 	}
 
 	return nil
-}
-
-func (acu *ActivitiesUseCaseImpl) helperError(err error) *helper.ErrorStruct {
-	if strings.Contains(err.Error(), "Not Found") {
-		return &helper.ErrorStruct{
-			Code: http.StatusNotFound,
-			Err:  err,
-		}
-	}
-	return &helper.ErrorStruct{
-		Code: http.StatusBadRequest,
-		Err:  err,
-	}
 }

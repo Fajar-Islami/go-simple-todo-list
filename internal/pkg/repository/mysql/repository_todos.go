@@ -4,16 +4,15 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"go-todo-list/internal/helper"
 	"log"
 )
 
 type TodosRepository interface {
 	GetAllTodos(ctx context.Context, params FilterTodos) (res []Todos, err error)
 	GetTodosByID(ctx context.Context, todosid int64) (res Todos, err error)
-	CreateTodos(ctx context.Context, data Todos) (res int64, err error)
-	UpdateTodosByID(ctx context.Context, todosid int64, data Todos) (res string, err error)
-	DeleteTodosByID(ctx context.Context, todosid int64) (res string, err error)
+	CreateTodos(ctx context.Context, data Todos) (res Todos, err error)
+	UpdateTodosByID(ctx context.Context, todosid int64, data Todos) (res Todos, err error)
+	DeleteTodosByID(ctx context.Context, todosid int64) (err error)
 }
 
 type TodosRepositoryImpl struct {
@@ -80,12 +79,12 @@ func (acr *TodosRepositoryImpl) GetTodosByID(ctx context.Context, todosid int64)
 		}
 		return res, nil
 	} else {
-		return res, fmt.Errorf("Todos with ID %d Not Found", todosid)
+		return res, fmt.Errorf("Todo with ID %d Not Found", todosid)
 	}
 
 }
 
-func (acr *TodosRepositoryImpl) CreateTodos(ctx context.Context, data Todos) (res int64, err error) {
+func (acr *TodosRepositoryImpl) CreateTodos(ctx context.Context, data Todos) (res Todos, err error) {
 	db := acr.db
 
 	// Check if activity is exist
@@ -106,10 +105,10 @@ func (acr *TodosRepositoryImpl) CreateTodos(ctx context.Context, data Todos) (re
 		return res, err
 	}
 
-	return id, nil
+	return acr.GetTodosByID(ctx, id)
 }
 
-func (acr *TodosRepositoryImpl) UpdateTodosByID(ctx context.Context, todosid int64, data Todos) (res string, err error) {
+func (acr *TodosRepositoryImpl) UpdateTodosByID(ctx context.Context, todosid int64, data Todos) (res Todos, err error) {
 	db := acr.db
 
 	// Check if todo exist
@@ -154,26 +153,26 @@ func (acr *TodosRepositoryImpl) UpdateTodosByID(ctx context.Context, todosid int
 
 	_, err = db.ExecContext(ctx, sql, args...)
 	if err != nil {
-		return helper.UpdateDataFailed, err
+		return res, err
 	}
 
-	return helper.UpdateDataSucceed, nil
+	return acr.GetTodosByID(ctx, todosid)
 }
 
-func (acr *TodosRepositoryImpl) DeleteTodosByID(ctx context.Context, todosid int64) (res string, err error) {
+func (acr *TodosRepositoryImpl) DeleteTodosByID(ctx context.Context, todosid int64) (err error) {
 	db := acr.db
 
 	_, err = acr.GetTodosByID(ctx, todosid)
 	if err != nil {
-		return res, err
+		return err
 	}
 
 	sql := fmt.Sprintf("delete from %s where todo_id=?", acr.tablename)
 
 	_, err = db.ExecContext(ctx, sql, todosid)
 	if err != nil {
-		return helper.DeleteDataFailed, err
+		return err
 	}
 
-	return helper.DeleteDataSucceed, nil
+	return nil
 }
