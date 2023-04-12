@@ -25,12 +25,10 @@ func HTTPRouteInit(containerConf *container.Container) {
 
 	app.Get("", HealthCheck)
 
-	api := app.Group("/api/v1") // /api
-
-	agApi := api.Group("/activity-groups")
+	agApi := app.Group("/activity-groups")
 	handler.ActivitiesRoute(agApi, containerConf)
 
-	todoApi := api.Group("/todo-items")
+	todoApi := app.Group("/todo-items")
 	handler.TodosRoute(todoApi, containerConf)
 
 	// Start server
